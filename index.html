@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#12355b">
+  <title>LaporAman — Laporan Anonim Lokal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#home"><span class="brand-icon">🛡️</span><span>Lapor<span>Aman</span></span></a>
+  <nav>
+    <a href="#home">Beranda</a>
+    <a href="#cara">Cara Kerja</a>
+    <a href="#lapor" class="nav-btn">Buat Laporan</a>
+  </nav>
+</header>
+
+<main>
+<section id="home" class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow">RUANG AMAN UNTUK PEDULI</div>
+    <h1>Laporkan lebih awal.<br><span>Cegah sebelum terjadi.</span></h1>
+    <p>Salurkan informasi tentang potensi tawuran, perundungan, atau indikasi peredaran zat berbahaya tanpa membuat akun.</p>
+    <div class="hero-actions">
+      <a href="#lapor" class="btn primary">Buat Laporan <span>→</span></a>
+      <a href="#status" class="btn ghost">Cek Status</a>
+    </div>
+    <div class="trust-row"><span>✓ Tanpa akun</span><span>✓ Tanpa nomor HP</span><span>✓ Kode tiket acak</span></div>
+  </div>
+  <div class="hero-card">
+    <div class="shield">🛡️</div>
+    <h3>Prioritaskan keselamatan</h3>
+    <p>Gunakan kanal ini untuk informasi pencegahan. Untuk keadaan yang sedang berlangsung atau mengancam keselamatan, hubungi layanan darurat setempat.</p>
+    <div class="mini-status"><i></i> Sistem siap menerima laporan</div>
+  </div>
+</section>
+
+<section id="cara" class="section">
+  <div class="section-head"><div class="eyebrow">SEDERHANA & TERARAH</div><h2>Bagaimana cara kerjanya?</h2></div>
+  <div class="steps">
+    <article><b>01</b><h3>Isi laporan</h3><p>Ceritakan kejadian, kategori, waktu, dan lokasi secara umum. Hindari data pribadi yang tidak diperlukan.</p></article>
+    <article><b>02</b><h3>Dapatkan kode tiket</h3><p>Setelah dikirim, sistem memberikan kode acak yang dapat digunakan untuk mengecek status.</p></article>
+    <article><b>03</b><h3>Petugas memverifikasi</h3><p>Laporan disaring dan dinilai agar tindak lanjut dapat diprioritaskan secara tepat.</p></article>
+    <article><b>04</b><h3>Tindak lanjut</h3><p>Informasi yang relevan diteruskan kepada pihak yang berwenang sesuai konteks laporan.</p></article>
+  </div>
+</section>
+
+<section id="lapor" class="section form-section">
+  <div class="section-head"><div class="eyebrow">LAPORAN ANONIM</div><h2>Bagikan informasi yang kamu ketahui</h2><p>Jangan cantumkan nama, nomor HP, alamat rumah, atau informasi pribadi pelapor.</p></div>
+  <form id="reportForm" class="card">
+    <label>Kategori laporan
+      <select id="category" required>
+        <option value="">Pilih kategori</option>
+        <option>Tawuran / potensi bentrok</option>
+        <option>Perundungan / bullying</option>
+        <option>Indikasi miras</option>
+        <option>Indikasi narkoba / zat terlarang</option>
+        <option>Gangguan keamanan lainnya</option>
+      </select>
+    </label>
+    <div class="grid2">
+      <label>Waktu kejadian
+        <input id="when" type="datetime-local" required>
+      </label>
+      <label>Lokasi umum
+        <input id="where" type="text" maxlength="120" placeholder="Contoh: sekitar gerbang sekolah" required>
+      </label>
+    </div>
+    <label>Urgensi
+      <select id="urgency" required>
+        <option value="normal">Informasi</option>
+        <option value="tinggi">Perlu segera diperiksa</option>
+        <option value="darurat">Darurat / risiko keselamatan</option>
+      </select>
+    </label>
+    <label>Kronologi / informasi
+      <textarea id="description" rows="7" maxlength="2000" placeholder="Tuliskan apa yang kamu ketahui secara faktual..." required></textarea>
+      <small><span id="counter">0</span>/2000 karakter</small>
+    </label>
+    <label class="check"><input id="consent" type="checkbox" required> Saya memahami bahwa laporan dapat diverifikasi dan diteruskan kepada pihak yang berwenang.</label>
+    <button class="btn primary full" type="submit">Kirim Laporan Aman <span>→</span></button>
+  </form>
+</section>
+
+<section id="status" class="section status-section">
+  <div class="section-head"><div class="eyebrow">PANTAU LAPORAN</div><h2>Cek status dengan kode tiket</h2></div>
+  <form id="statusForm" class="card status-card">
+    <label>Kode tiket
+      <input id="ticketInput" placeholder="Contoh: LA-7K3P9Q" maxlength="10" required>
+    </label>
+    <button class="btn dark" type="submit">Cek Status</button>
+    <div id="statusResult" class="status-result hidden"></div>
+  </form>
+</section>
+
+<section class="privacy">
+  <div><span class="lock">🔒</span><div><h3>Privasi adalah bagian dari desain</h3><p>Prototype ini tidak meminta akun, nomor HP, atau email. Untuk penggunaan nyata, backend dan hosting harus dikonfigurasi secara khusus agar log dan data sensitif dikelola sesuai kebijakan privasi.</p></div></div>
+</section>
+</main>
+
+<footer><strong>LaporAman</strong><span>Platform pencegahan dini berbasis komunitas</span><span>© 2026</span></footer>
+<div id="toast" class="toast"></div>
+<script src="script.js"></script>
+</body>
+</html>
