@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Petugas — LaporAman</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --danger: #f43f5e;
+      --warning: #fbbf24;
+      --success: #34d399;
+      --badge-darurat: rgba(244, 63, 94, 0.15);
+      --badge-tinggi: rgba(251, 191, 36, 0.15);
+      --badge-normal: rgba(56, 189, 248, 0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #1e293b;
+      border-bottom: 1px solid var(--surface-border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .brand span { color: var(--primary); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .bell-wrapper {
+      position: relative;
+      cursor: pointer;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .badge-dot {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 9px;
+      height: 9px;
+      background: var(--danger);
+      border-radius: 50%;
+      border: 2px solid var(--surface);
+      display: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 24px;
+      flex: 1;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-val {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-top: 6px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    select, input {
+      background: var(--surface);
+      color: var(--text-main);
+      border: 1px solid var(--surface-border);
+      padding: 9px 13px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .btn-action {
+      background: var(--primary);
+      color: #0f172a;
+      border: none;
+      font-weight: 700;
+      padding: 9px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .report-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .report-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .ticket-badge {
+      font-family: monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .urgency-badge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-left: 8px;
+    }
+
+    .urgency-darurat { background: var(--badge-darurat); color: var(--danger); }
+    .urgency-tinggi { background: var(--badge-tinggi); color: var(--warning); }
+    .urgency-normal { background: var(--badge-normal); color: var(--primary); }
+
+    .report-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .report-desc {
+      background: #0f172a;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      white-space: pre-wrap;
+    }
+
+    .report-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--surface-border);
+      padding-top: 14px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px dashed var(--surface-border);
+    }
+
+    .toast-popup {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0284c7;
+      color: #fff;
+      padding: 12px 18px;
+      border-radius: 8px;
+      display: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      z-index: 100;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div style="font-size: 1.3rem;">🛡️</div>
+    <div>Lapor<span>Aman</span> Officer</div>
+  </div>
+  <div class="header-actions">
+    <button class="bell-wrapper" id="bellBtn" title="Tes Notifikasi Suara">
+      🔔
+      <div class="badge-dot" id="bellDot"></div>
+    </button>
+    <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Halaman Warga ↗</a>
+  </div>
+</header>
+
+<div class="container">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Masuk</div>
+      <div class="stat-val" id="statTotal">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" style="color: var(--danger)">Darurat / Segera</div>
+      <div class="stat-val" id="statUrgent" style="color: var(--danger)">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" style="color: var(--warning)">Perlu Ditindak</div>
+      <div class="stat-val" id="statPending" style="color: var(--warning)">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label" style="color: var(--success)">Selesai</div>
+      <div class="stat-val" id="statResolved" style="color: var(--success)">0</div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="filters">
+      <input type="text" id="searchBox" placeholder="Cari tiket, lokasi...">
+      <select id="filterStatus">
+        <option value="all">Semua Status</option>
+        <option value="Diterima">Diterima</option>
+        <option value="Diproses">Diproses</option>
+        <option value="Selesai">Selesai</option>
+      </select>
+      <select id="filterUrgency">
+        <option value="all">Semua Urgensi</option>
+        <option value="darurat">Darurat</option>
+        <option value="tinggi">Tinggi</option>
+        <option value="normal">Normal</option>
+      </select>
+    </div>
+    <button class="btn-action" id="refreshBtn">Refresh Data</button>
+  </div>
+
+  <div class="report-grid" id="reportList"></div>
+</div>
+
+<div class="toast-popup" id="toastBox"></div>
+
+<script>
+  let lastReportCount = 0;
+
+  function playSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.5);
+    } catch(e) {}
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById("toastBox");
+    t.textContent = msg;
+    t.style.display = "block";
+    setTimeout(() => { t.style.display = "none"; }, 3500);
+  }
+
+  function getReports() {
+    return JSON.parse(localStorage.getItem("laporAmanReports") || "[]");
+  }
+
+  function saveReports(data) {
+    localStorage.setItem("laporAmanReports", JSON.stringify(data));
+  }
+
+  function updateStatus(ticket, newStatus) {
+    const list = getReports();
+    const idx = list.findIndex(r => r.ticket === ticket);
+    if (idx !== -1) {
+      list[idx].status = newStatus;
+      saveReports(list);
+      showToast("Status tiket " + ticket + " diperbarui ke " + newStatus);
+      renderUI();
+    }
+  }
+
+  function renderUI() {
+    const reports = getReports();
+    const query = (document.getElementById("searchBox").value || "").toLowerCase();
+    const fStatus = document.getElementById("filterStatus").value;
+    const fUrgency = document.
