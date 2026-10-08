@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Petugas — LaporAman</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.dashboard{max-width:1200px;margin:auto;padding:35px 22px 70px}
+.dash-head{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:28px}
+.dash-head h1{margin:0;color:#12355b;font-size:30px}.dash-head p{margin:5px 0 0;color:#687789;font-size:13px}
+.badge{padding:8px 12px;border-radius:999px;background:#edf6ff;color:#1976d2;font-size:12px;font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}
+.stat{background:#fff;border:1px solid #dce5ee;border-radius:14px;padding:20px}.stat small{color:#687789}.stat strong{display:block;font-size:28px;color:#12355b;margin-top:5px}
+.panel{background:#fff;border:1px solid #dce5ee;border-radius:16px;overflow:hidden}
+.toolbar{padding:17px;display:flex;gap:10px;flex-wrap:wrap;border-bottom:1px solid #e7edf3}
+.toolbar input,.toolbar select{padding:10px 12px;border:1px solid #d7e0e9;border-radius:9px;font:inherit}
+.toolbar input{min-width:220px;flex:1}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:780px}th,td{text-align:left;padding:15px;border-bottom:1px solid #edf1f5;font-size:13px}th{background:#f8fafc;color:#657488;font-size:11px;text-transform:uppercase;letter-spacing:.5px}td{color:#33465a}
+.priority{display:inline-block;padding:5px 8px;border-radius:7px;font-size:11px;font-weight:800}.normal{background:#edf8f2;color:#18734b}.tinggi{background:#fff5df;color:#9a6511}.darurat{background:#fff0f0;color:#b13d3d}
+.status{border:0;padding:7px 9px;border-radius:7px;background:#f0f4f8;font-weight:700;color:#345;cursor:pointer}
+.ticket{font-weight:800;color:#1976d2}.empty{text-align:center;padding:45px;color:#7b8998}
+.modal{position:fixed;inset:0;background:#102b4966;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.modal.show{display:flex}.modal-box{background:#fff;border-radius:17px;max-width:650px;width:100%;max-height:90vh;overflow:auto;padding:27px}.modal-head{display:flex;justify-content:space-between;gap:20px}.close{border:0;background:#eef2f6;border-radius:8px;width:35px;height:35px;cursor:pointer}.detail{margin:20px 0}.detail div{padding:11px 0;border-bottom:1px solid #edf1f5}.detail b{display:block;font-size:11px;color:#788797;text-transform:uppercase;margin-bottom:3px}.detail p{margin:0;white-space:pre-wrap}.modal-actions{display:flex;gap:10px}.btn{border:0;border-radius:9px;padding:11px 15px;font-weight:800;cursor:pointer}.btn.dark{background:#12355b;color:#fff}.btn.light{background:#eef3f8;color:#345}
+.notice{margin-bottom:20px;padding:14px 17px;border-radius:12px;background:#fff8e8;color:#805b13;font-size:12px}
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.dash-head{align-items:flex-start;flex-direction:column}}@media(max-width:480px){.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar">
+<a class="brand" href="index.html"><span class="brand-icon">🛡️</span><span>Lapor<span>Aman</span></span></a>
+<nav><a href="index.html">Halaman Pelapor</a></nav>
+</header>
+
+<main class="dashboard">
+<div class="dash-head">
+<div><div class="eyebrow">AREA PETUGAS</div><h1>Dashboard Laporan</h1><p>Pantau, verifikasi, dan perbarui tindak lanjut laporan.</p></div>
+<div class="badge">● Mode Prototype</div>
+</div>
+
+<div class="notice">⚠️ Dashboard ini masih menggunakan <b>localStorage</b>. Artinya laporan hanya terlihat pada browser/perangkat yang menyimpannya. Jangan digunakan untuk laporan sensitif sebelum disambungkan ke backend/database yang aman.</div>
+
+<section class="stats">
+<div class="stat"><small>Total laporan</small><strong id="total">0</strong></div>
+<div class="stat"><small>Belum diproses</small><strong id="new">0</strong></div>
+<div class="stat"><small>Prioritas tinggi</small><strong id="high">0</strong></div>
+<div class="stat"><small>Selesai</small><strong id="done">0</strong></div>
+</section>
+
+<section class="panel">
+<div class="toolbar">
+<input id="search" placeholder="Cari kode, kategori, lokasi...">
+<select id="filter"><option value="all">Semua urgensi</option><option value="darurat">Darurat</option><option value="tinggi">Perlu segera</option><option value="normal">Informasi</option></select>
+<select id="statusFilter"><option value="all">Semua status</option><option>Diterima</option><option>Diverifikasi</option><option>Ditindaklanjuti</option><option>Selesai</option></select>
+</div>
+<div class="table-wrap">
+<table><thead><tr><th>Kode</th><th>Kategori</th><th>Lokasi</th><th>Urgensi</th><th>Status</th><th>Aksi</th></tr></thead>
+<tbody id="rows"></tbody></table>
+</div>
+</section>
+</main>
+
+<div class="modal" id="modal"><div class="modal-box">
+<div class="modal-head"><div><div class="eyebrow">DETAIL LAPORAN</div><h2 id="modalTitle">Laporan</h2></div><button class="close" id="close">×</button></div>
+<div id="detail" class="detail"></div>
+<div class="modal-actions">
+<button class="btn light" onclick="setStatus('Diverifikasi')">Tandai Diverifikasi</button>
+<button class="btn dark" onclick="setStatus('Ditindaklanjuti')">Tandai Ditindaklanjuti</button>
+<button class="btn light" onclick="setStatus('Selesai')">Tandai Selesai</button>
+</div>
+</div></div>
+
+<script>
+const getReports=()=>JSON.parse(localStorage.getItem("laporAmanReports")||"[]");
+const saveReports=x=>localStorage.setItem("laporAmanReports",JSON.stringify(x));
+let selected=null;
+
+function updateStats(a){
+ document.getElementById("total").textContent=a.length;
+ document.getElementById("new").textContent=a.filter(x=>x.status==="Diterima").length;
+ document.getElementById("high").textContent=a.filter(x=>x.urgency==="darurat"||x.urgency==="tinggi").length;
+ document.getElementById("done").textContent=a.filter(x=>x.status==="Selesai").length;
+}
+function render(){
+ const all=getReports();updateStats(all);
+ const q=document.getElementById("search").value.toLowerCase();
+ const f=document.getElementById("filter").value,s=document.getElementById("statusFilter").value;
+ const a=all.filter(x=>(f==="all"||x.urgency===f)&&(s==="all"||x.status===s)&&
+ [x.ticket,x.category,x.where,x.description].join(" ").toLowerCase().includes(q));
+ const rows=document.getElementById("rows");
+ rows.innerHTML=a.length?a.map((x,i)=>`<tr>
+ <td class="ticket">${x.ticket}</td><td>${x.category}</td><td>${x.where}</td>
+ <td><span class="priority ${x.urgency}">${x.urgency==="darurat"?"DARURAT":x.urgency==="tinggi"?"TINGGI":"NORMAL"}</span></td>
+ <td><button class="status" onclick="openReport('${x.ticket}')">${x.status}</button></td>
+ <td><button class="btn light" onclick="openReport('${x.ticket}')">Lihat</button></td></tr>`).join(""):`<tr><td colspan="6" class="empty">Belum ada laporan yang sesuai filter.</td></tr>`;
+}
+function openReport(ticket){
+ const x=getReports().find(r=>r.ticket===ticket);if(!x)return;selected=ticket;
+ document.getElementById("modalTitle").textContent=x.ticket;
+ document.getElementById("detail").innerHTML=`
+ <div><b>Kategori</b>${x.category}</div><div><b>Waktu kejadian</b>${new Date(x.when).toLocaleString("id-ID")}</div>
+ <div><b>Lokasi umum</b>${escapeHtml(x.where)}</div><div><b>Urgensi</b>${x.urgency}</div>
+ <div><b>Status</b>${x.status}</div><div><b>Kronologi</b><p>${escapeHtml(x.description)}</p></div>`;
+ document.getElementById("modal").classList.add("show");
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function setStatus(status){
+ if(!selected)return;
+ const a=getReports(),i=a.findIndex(x=>x.ticket===selected);if(i<0)return;
+ a[i].status=status;saveReports(a);document.getElementById("modal").classList.remove("show");render();
+}
+document.getElementById("close").onclick=()=>document.getElementById("modal").classList.remove("show");
+document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")e.currentTarget.classList.remove("show")};
+["search","filter","statusFilter"].forEach(id=>document.getElementById(id).addEventListener("input",render));
+render();
+</script>
+</body>
+</html>
